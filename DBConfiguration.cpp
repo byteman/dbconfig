@@ -153,6 +153,11 @@ void DBConfiguration::setRaw(const std::string& key, const std::string& value)
 
 void DBConfiguration::enumerate(const std::string& key, Keys& range) const
 {
+    if(key.empty())
+    {
+        cw_error("key empty");
+        return;
+    }
 	Session session (Poco::Data::SQLite::Connector::KEY, _path);
 	std::string table_name = key;
 	try
@@ -161,7 +166,7 @@ void DBConfiguration::enumerate(const std::string& key, Keys& range) const
 	}
 	catch(Poco::Data::SQLite::SQLiteException& e)
 	{
-		printf("sql err %s\r\n",e.displayText().c_str());
+        cw_error("sql err %s\r\n",e.displayText().c_str());
 	}
 	
 }
@@ -231,28 +236,19 @@ bool DBConfiguration::commit()
     {
         if(_mapKeyValue.size() == 0)
             return false;
-        int count = 0;
+
         Session session (Poco::Data::SQLite::Connector::KEY, _path);
 
-        std::map<std::string,std::string>::const_iterator it = _mapKeyValue.begin();
+        session.begin();
 
-        while(count <= _mapKeyValue.size())
+        for (std::map<std::string,std::string>::const_iterator it = _mapKeyValue.begin(); it != _mapKeyValue.end(); ++it)
         {
-            session.begin();
-
-            for (; it != _mapKeyValue.end(); ++it)
-            {
-                std::string key = it->first;
-                std::string value = it->second;
-                setDbRaw(session,key, value);
-                count++;
-                if( (count % 400) == 0 )
-                    break;
-            }
-
-            session.commit();
+            std::string key = it->first;
+            std::string value = it->second;
+            setDbRaw(session,key, value);
         }
 
+        session.commit();
 
         _mapKeyValue.clear();
     }
@@ -282,6 +278,6 @@ void dbconfig_test()
 
 	for(int i = 0 ;i < keys.size();i++)
 	{
-		printf("key[%d]=%s\r\n",i+1,keys[i].c_str());
+        cw_error("key[%d]=%s\r\n",i+1,keys[i].c_str());
 	}
 }

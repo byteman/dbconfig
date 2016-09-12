@@ -5,16 +5,17 @@
 #include <map>
 #include <istream>
 
+
+
+#ifdef DBCONFIG_EXPORTS
+#define DBCONFIG_API __declspec(dllexport)
+#else
+#define DBCONFIG_API
+#endif
+
 using Poco::Util::AbstractConfiguration;
 
-/**
-  FIXME:
-  1.每个表最多只能插入1000条数据
-  */
-
-//#include "DatabaseModuleConfig.h"
-#define DATABASEMODULE_API
-class DATABASEMODULE_API DBConfiguration :
+class DBCONFIG_API DBConfiguration :
 	public AbstractConfiguration
 {
 public:

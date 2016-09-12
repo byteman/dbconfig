@@ -12,6 +12,17 @@ int main(int argc, char *argv[])
 
     DBConfiguration config("mydb.db",true);
 
+    std::vector<std::string> akeys;
+
+    config.keys(akeys);
+
+    config.keys("ports",akeys);
+    for(size_t i = 0; i < akeys.size(); i++)
+    {
+        std::string key = akeys[i];
+        std::string value = config.getString("ports."+akeys[i]);
+        printf("key=%s,value=%s\n",key.c_str(),value.c_str());
+    }
     printf("%s ports.baud \n",config.has("ports.baud")?"has":"has not");
     printf("%s ports.name \n",config.has("ports.name")?"has":"has not");
     printf("%s ports.name \n",config.hasOption("ports.name")?"has":"has not");
@@ -36,7 +47,7 @@ int main(int argc, char *argv[])
     config.setDouble("ports.timeout",123.44);
     config.setString("ports.name","wwww");
 
-    int count = 1001;
+    int count = 2000;
     for(int i = 0; i < count; i++)
     {
         std::string key = Poco::format("ports.index%d",i);

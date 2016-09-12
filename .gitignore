@@ -1,0 +1,8 @@
+Makefile
+Makefile.Debug
+*.ilk
+*.pdb
+*.obj
+DBConfig.exe
+*.Release
+*.db
